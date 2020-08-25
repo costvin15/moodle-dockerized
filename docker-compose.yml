@@ -1,0 +1,28 @@
+version: "3.0"
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./server.conf:/etc/nginx/conf.d/default.conf
+      - ./moodle:/www/moodle
+      - ./moodledata:/www/moodledata
+    links:
+      - php
+  php:
+    build:
+      context: .
+      dockerfile: moodle.dockerfile
+    volumes:
+      - ./moodle:/www/moodle
+      - ./moodledata:/www/moodledata
+  database:
+    image: postgres:11
+    environment:
+      POSTGRES_DATABASE: moodle
+      POSTGRES_USER: moodle
+      POSTGRES_PASSWORD: password
+      POSTGRES_ROOT_PASSWORD: root
+    volumes:
+      - ./database:/var/lib/postgresql/data
